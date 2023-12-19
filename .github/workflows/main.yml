@@ -18,8 +18,7 @@ jobs:
     steps:
       - name: Try to fail
         run: exit 1
-      - uses: actions/checkout@master
-        name: Microsoft Teams Notification
+      - name: Microsoft Teams Notification
         uses: skitionek/notify-microsoft-teams@master
         if: failure()
         with:
