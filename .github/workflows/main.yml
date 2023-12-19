@@ -25,7 +25,7 @@ jobs:
         uses: skitionek/notify-microsoft-teams@master
         if: failure()
         with:
-          webhook_url: ${{ secrets.TEAMS_WEBHOOK_URL}}
+          webhook_url: ${{ secrets.MSTEAMS_WEBHOOK}}
           raw: >-
             {
               "@type": "MessageCard",
