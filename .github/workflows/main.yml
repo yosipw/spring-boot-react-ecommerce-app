@@ -23,18 +23,12 @@ jobs:
       - id: Notify_failure
         name: Microsoft Teams Notification
         uses: skitionek/notify-microsoft-teams@master
-        if: failure()
+        if: always()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK}}
           needs: ${{ env.needs }}
           job: ${{ toJson(job) }}
           steps: ${{ env.steps }}
-          raw: >-
-            {
-              "@type": "MessageCard",
-              "@context": "http://schema.org/extensions",
-              "title": "No avaliable in here"
-            }
   failure:
     name: One failure
     runs-on: ubuntu-latest
