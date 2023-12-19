@@ -6,7 +6,10 @@ jobs:
   failin:
     name: test failur
     runs-on: ubuntu-latest
-    run: exit 1
+    steps:
+    - uses: actions/checkout@master
+    - name: Try to fail
+      run: exit 1
   success:
     name: One with everything
     runs-on: ubuntu-latest
