@@ -17,4 +17,3 @@ jobs:
           job: ${{ toJson(job) }}
           steps: ${{ toJson(steps) }}
           dry_run: True
-          raw: 'success'
