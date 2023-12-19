@@ -64,7 +64,7 @@ jobs:
           
       - name: MSTeams Notification
         uses: skitionek/notify-microsoft-teams@master
-        if: always()
+        if: failure()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
           needs: ${{ env.needs }}
