@@ -3,6 +3,10 @@ name: Check notification
 on: [push, pull_request]
 
 jobs:
+  failin:
+    name: test failur
+    runs-on: ubuntu-latest
+    run: exit 1
   success:
     name: One with everything
     runs-on: ubuntu-latest
