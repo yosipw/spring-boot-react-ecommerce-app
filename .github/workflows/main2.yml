@@ -1,11 +1,13 @@
 name: Check notification
 
-on: [push, pull_request]
+on:
+  push: {}
+  release: {}
 
 jobs:
   success:
     name: One with everything
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@master
       - name: Microsoft Teams Notification
@@ -17,4 +19,3 @@ jobs:
           job: ${{ toJson(job) }}
           steps: ${{ toJson(steps) }}
           dry_run: True
-          raw: 'success'
