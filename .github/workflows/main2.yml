@@ -34,3 +34,4 @@ jobs:
         if: failure()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
+          raw: 'test fail'
