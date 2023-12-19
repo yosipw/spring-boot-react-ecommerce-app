@@ -5,6 +5,13 @@ on:
   release: {}
 
 jobs:
+  failing:
+    name: test failur
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Try to fail
+      run: exit 1
   success:
     name: One with everything
     runs-on: ubuntu-latest
@@ -18,3 +25,17 @@ jobs:
           needs: ${{ toJson(needs) }}
           job: ${{ toJson(job) }}
           steps: ${{ toJson(steps) }}
+  if_failure:
+    name: Only if failure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@master
+        if: failure()
+        with:
+          webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
+          needs: ${{ toJson(needs) }}
+          job: ${{ toJson(job) }}
+          steps: ${{ toJson(steps) }}
+          raw: 'test fail'
