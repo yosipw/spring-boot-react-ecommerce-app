@@ -1,6 +1,8 @@
 name: Check notification
 
-on: [push, pull_request]
+on:
+  push: {}
+  release: {}
 
 jobs:
   success:
