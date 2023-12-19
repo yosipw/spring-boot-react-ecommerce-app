@@ -16,9 +16,11 @@ jobs:
     name: Only if failure
     runs-on: ubuntu-latest
     steps:
-      - name: Try to fail
+      - id: Forced_failure
+        name: Try to fail
         run: exit 1
-      - name: Microsoft Teams Notification
+      - id: Notify_failure
+        name: Microsoft Teams Notification
         uses: skitionek/notify-microsoft-teams@master
         if: failure()
         with:
