@@ -6,7 +6,7 @@ on:
 
 jobs:
   failing:
-    name: test failur
+    name: test failure
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
@@ -22,23 +22,10 @@ jobs:
         uses: skitionek/notify-microsoft-teams@master
         if: failure()
         with:
-          webhook_url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          webhook_url: ${{ secrets.TEAMS_WEBHOOK_URL}}
           raw: >-
             {
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
-              "title": "No   avaliable in here"
+              "title": "No avaliable in here"
             }
-  success:
-    name: One with everything
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - name: Microsoft Teams Notification
-        uses: skitionek/notify-microsoft-teams@master
-        if: always()
-        with:
-          webhook_url: ${{ secrets.TEAMS_WEBHOOK_URL}}
-          needs: ${{ toJson(needs) }}
-          job: ${{ toJson(job) }}
-          steps: ${{ toJson(steps) }}
