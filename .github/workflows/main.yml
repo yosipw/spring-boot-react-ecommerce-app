@@ -16,8 +16,7 @@ jobs:
     name: Only if failure
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-        name: Try to fail
+      - name: Try to fail
         run: exit 1
       - uses: actions/checkout@master
         name: Microsoft Teams Notification
