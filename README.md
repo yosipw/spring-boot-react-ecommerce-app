@@ -1,4 +1,4 @@
-# spring-boot-react-ecommerce-app
+# spring-boot-react-ecommerce-app..
 eCommerce application based on the microservices architecture built using Spring Boot and ReactJS.
 
 **DEMO**
