@@ -1,0 +1,21 @@
+name: Check notification
+
+on:
+  push: {}
+  release: {}
+
+jobs:
+  success:
+    name: One with everything
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@master
+        if: always()
+        with:
+          webhook_url: ${{ secrets.TEAMS_WEBHOOK_URL}}
+          needs: ${{ toJson(needs) }}
+          job: ${{ toJson(job) }}
+          steps: ${{ toJson(steps) }}
+          dry_run: True
