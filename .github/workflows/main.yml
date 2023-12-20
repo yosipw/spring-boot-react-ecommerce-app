@@ -20,17 +20,29 @@ jobs:
       - failing
     steps:
       - name: Overwrite status
-        uses: actions/checkout@master
         id: overwrites
         env:
           steps: ${{ toJson(steps) }}
           needs: ${{ toJson(needs) }}
+        run: |
+          echo "needs<<EOF" >> $GITHUB_ENV
+          echo $needs | jq '.[].result = "failure"' >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          echo "steps<<EOF" >> $GITHUB_ENV
+          echo $steps | jq '.[].outcome = "failure"' >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
       - name: Overwrite status env
-        uses: actions/checkout@master
         id: overwrites2
         env:
           steps: ${{ toJson(env.steps) }}
           needs: ${{ toJson(env.needs) }}
+        run: |
+          echo "needs<<EOF" >> $GITHUB_ENV
+          echo $needs | jq '.[].result = "failure"' >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          echo "steps<<EOF" >> $GITHUB_ENV
+          echo $steps | jq '.[].outcome = "failure"' >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
       - id: Notify_failure
         name: Microsoft Teams Notification
         uses: skitionek/notify-microsoft-teams@master
