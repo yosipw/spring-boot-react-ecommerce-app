@@ -26,5 +26,5 @@ jobs:
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK}}
           needs: ${{ env.needs }}
-          job: ${{ toJson(needs.job) }}
-          steps: ${{ needs.steps }}
+          job: ${{ toJson(env.needs.job) }}
+          steps: ${{ env.needs.steps }}
