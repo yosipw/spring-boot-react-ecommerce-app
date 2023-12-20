@@ -19,14 +19,15 @@ jobs:
     needs:
       - failing
     steps:
-      - uses: actions/checkout@master
       - name: Overwrite status
+        uses: actions/checkout@master
         id: overwrites
         env:
           steps: ${{ toJson(steps) }}
           needs: ${{ toJson(needs) }}
       - name: Overwrite status env
-        id: overwrites
+        uses: actions/checkout@master
+        id: overwrites2
         env:
           steps: ${{ toJson(env.steps) }}
           needs: ${{ toJson(env.needs) }}
