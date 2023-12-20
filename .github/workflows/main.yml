@@ -5,50 +5,20 @@ on:
   release: {}
 
 jobs:
-  failing:
-    name: test failure
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-    - name: Try to fail
-      run: exit 1
   if_failure:
     name: Only if failure
     runs-on: ubuntu-latest
-    if: always()
-    needs:
-      - failing
     steps:
-      - name: Overwrite status
-        id: overwrites
-        env:
-          steps: ${{ toJson(steps) }}
-          needs: ${{ toJson(needs) }}
-        run: |
-          echo "needs<<EOF" >> $GITHUB_ENV
-          echo $needs | jq '.[].result = "failure"' >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-          echo "steps<<EOF" >> $GITHUB_ENV
-          echo $steps | jq '.[].outcome = "failure"' >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-      - name: Overwrite status env
-        id: overwrites2
-        env:
-          steps: ${{ toJson(env.steps) }}
-          needs: ${{ toJson(env.needs) }}
-        run: |
-          echo "needs<<EOF" >> $GITHUB_ENV
-          echo $needs | jq '.[].result = "failure"' >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-          echo "steps<<EOF" >> $GITHUB_ENV
-          echo $steps | jq '.[].outcome = "failure"' >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+      - uses: actions/checkout@master
+      - id: Forced_failure
+        name: Try to fail
+        run: exit 1
       - id: Notify_failure
         name: Microsoft Teams Notification
         uses: skitionek/notify-microsoft-teams@master
-        if: ${{ always() && contains(needs.*.result, 'failure') }}
+        if: failure()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK}}
           needs: ${{ env.needs }}
-          job: ${{ toJson(env.needs.job) }}
-          steps: ${{ env.needs.steps }}
+          job: ${{ toJson(job) }}
+          steps: ${{ env.steps }}
