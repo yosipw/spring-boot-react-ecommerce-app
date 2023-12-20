@@ -13,6 +13,8 @@ jobs:
     - name: Try to fail
       run: exit 1
   notify:
+    needs:
+      - build
     name: sending message
     runs-on: ubuntu-latest
     steps:
