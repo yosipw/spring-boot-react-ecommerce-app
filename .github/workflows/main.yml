@@ -1,3 +1,9 @@
+name: Check notification
+
+on:
+  push: {}
+  release: {}
+
 jobs:
   build:
     name: test failure
