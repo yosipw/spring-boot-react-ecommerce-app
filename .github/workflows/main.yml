@@ -1,22 +1,28 @@
-name: Check notification
-
-on:
-  push: {}
-  release: {}
-
 jobs:
-  if_failure:
-    name: Only if failure
+  build:
+    name: test failure
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - id: Forced_failure
-        name: Try to fail
-        run: exit 1
+    - uses: actions/checkout@master
+    - name: Try to fail
+      run: exit 1
+  notify:
+    name: sending message
+    runs-on: ubuntu-latest
+    steps:
       - id: Notify_failure
         name: Microsoft Teams Notification
         uses: skitionek/notify-microsoft-teams@master
-        if: failure()
+        if: ${{ always() && contains(needs.*.result, 'failure') }}
+        with:
+          webhook_url: ${{ secrets.MSTEAMS_WEBHOOK}}
+          needs: ${{ env.needs }}
+          job: ${{ toJson(job) }}
+          steps: ${{ env.steps }}
+      - id: Notify_success
+        name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@master
+        if: ${{ always() && contains(needs.*.result, 'success') }}
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK}}
           needs: ${{ env.needs }}
