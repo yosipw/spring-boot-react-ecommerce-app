@@ -19,6 +19,7 @@ jobs:
     needs:
       - failing
     steps:
+      - uses: actions/checkout@master
       - name: Overwrite status
         id: overwrites
         env:
