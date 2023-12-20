@@ -19,6 +19,16 @@ jobs:
     needs:
       - failing
     steps:
+      - name: Overwrite status
+        id: overwrites
+        env:
+          steps: ${{ toJson(steps) }}
+          needs: ${{ toJson(needs) }}
+      - name: Overwrite status env
+        id: overwrites
+        env:
+          steps: ${{ toJson(env.steps) }}
+          needs: ${{ toJson(env.needs) }}
       - id: Notify_failure
         name: Microsoft Teams Notification
         uses: skitionek/notify-microsoft-teams@master
