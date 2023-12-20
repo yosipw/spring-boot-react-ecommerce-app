@@ -25,6 +25,6 @@ jobs:
         if: ${{ always() && contains(needs.*.result, 'failure') }}
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK}}
-          needs: ${{ needs.failing }}
+          needs: ${{ env.needs }}
           job: ${{ toJson(needs.job) }}
           steps: ${{ needs.steps }}
