@@ -17,6 +17,7 @@ jobs:
       - build
     name: sending message
     runs-on: ubuntu-latest
+    if: always()
     steps:
       - id: Notify_failure
         name: Microsoft Teams Notification
