@@ -15,6 +15,7 @@ jobs:
   if_failure:
     name: Only if failure
     runs-on: ubuntu-latest
+    if: always()
     needs:
       - failing
     steps:
