@@ -25,9 +25,7 @@ jobs:
         if: ${{ always() && contains(needs.*.result, 'failure') }}
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK}}
-          needs: ${{ env.needs }}
           job: '{ "status": "failure" }'
-          steps: ${{ env.steps }}
       - id: Notify_success
         name: Microsoft Teams Notification
         uses: skitionek/notify-microsoft-teams@master
