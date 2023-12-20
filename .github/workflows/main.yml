@@ -11,7 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Try to fail
-      run: exit 1
+      run: exit 0
   notify:
     needs:
       - build
@@ -35,5 +35,5 @@ jobs:
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK}}
           needs: ${{ env.needs }}
-          job: '{ "status": "failure" }'
+          job: '{ "status": "success" }'
           steps: ${{ env.steps }}
