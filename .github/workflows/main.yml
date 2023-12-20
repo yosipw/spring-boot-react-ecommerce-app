@@ -26,8 +26,7 @@ jobs:
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK}}
           needs: ${{ env.needs }}
-          job:
-           - status: needs.*.result
+          job: "{status: failure}"
           steps: ${{ env.steps }}
       - id: Notify_success
         name: Microsoft Teams Notification
@@ -36,6 +35,5 @@ jobs:
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK}}
           needs: ${{ env.needs }}
-          job:
-           - status: needs.*.result
+          job: "{status: failure}"
           steps: ${{ env.steps }}
