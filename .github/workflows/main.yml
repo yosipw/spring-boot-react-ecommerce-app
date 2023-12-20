@@ -11,7 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Try to fail
-      run: exit 0
+      run: exit 1
   notify:
     needs:
       - build
