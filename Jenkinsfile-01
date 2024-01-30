@@ -13,21 +13,38 @@
 pipeline {
     agent any
 
-    options {}
+    options {
+		buildDiscarder(logRotator(numToKeepStr: '10'))
+        disableConcurrentBuilds()
+        timeout(time: 1, unit: 'HOURS')
+        timestamps()
+	}
 
-    tools {}
+    tools {
+        jdk 'openjdk-11'
+        maven 'maven 3.6.3'
+        dockerTool 'docker-latest'
+	}
 
     environment {}
 
     stages {
-        stage('Build & Test') {}
+        stage('Build & Test') {
+			echo("Build & Test")
+		}
 
-        stage('Build Docker Image') {}
+        stage('Build Docker Image') {
+			echo("Build Docker Image")
+		}
 
-        stage('Push Image to ECR') {}
+        stage('Push Image to ECR') {
+			echo("Push Image to ECR")
+		}
 
-        stage('Deploy in ECS') {}
+        stage('Deploy in ECS') {
+			echo("Deploy in ECS")
+		}
     }
 
-    post {}
+  //  post {}
 }
