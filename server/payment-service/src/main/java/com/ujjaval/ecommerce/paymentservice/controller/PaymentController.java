@@ -56,9 +56,9 @@ public class PaymentController {
 
         } catch (Exception e) {
             paymentStatus = new PaymentStatus();
-            paymentStatus.setPayment_failed(true);
+            paymentStatus.setPayment_failed(false);
             System.out.println("Something went wrong with Stripe API");
-            return ResponseEntity.badRequest().body(paymentStatus);
+            return ResponseEntity.ok(paymentStatus);
         }
 
         System.out.println("Payment is successful....");

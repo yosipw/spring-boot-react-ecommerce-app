@@ -3,7 +3,7 @@
 # 1. Building the App with Maven
 FROM maven:3-jdk-11
 
-ADD . /authentication_service_staging
+ADD ./server/authentication-service /authentication_service_staging
 
 WORKDIR /authentication_service_staging
 

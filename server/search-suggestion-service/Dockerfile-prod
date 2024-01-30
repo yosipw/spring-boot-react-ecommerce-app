@@ -3,7 +3,7 @@
 # 1. Building the App with Maven
 FROM maven:3-jdk-11
 
-ADD . /search_suggestion_service_staging
+ADD ./server/search-suggestion-service /search_suggestion_service_staging
 
 WORKDIR /search_suggestion_service_staging
 

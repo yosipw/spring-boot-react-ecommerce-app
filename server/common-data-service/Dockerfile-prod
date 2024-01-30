@@ -3,7 +3,7 @@
 # 1. Building the App with Maven
 FROM maven:3-jdk-11
 
-ADD . /common_data_service_staging
+ADD ./server/common-data-service /common_data_service_staging
 
 WORKDIR /common_data_service_staging
 

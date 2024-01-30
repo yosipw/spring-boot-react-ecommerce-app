@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  react-ui:
+    build:
+      context: .
+      dockerfile: ./client/Dockerfile-new
+    container_name: react-service-container-new
+    stdin_open: true
+    restart: always
+    expose:
+      - ${REACT_APP_PORT_DOCKER}
+    ports:
+      - ${REACT_APP_PORT}:${REACT_APP_PORT_DOCKER}
+    environment:
+      - REACT_APP_STRIPE_PUBLISH_KEY=${REACT_APP_STRIPE_PUBLISH_KEY}
+      - REACT_APP_COMMON_DATA_SERVICE_PORT=${COMMON_DATA_SERVICE_PORT}
+      - REACT_APP_ENVIRONMENT=${REACT_APP_ENVIRONMENT}
+    networks:
+      - spring-cloud-microservices-new
+networks:
+  spring-cloud-microservices-new:
+    external: true

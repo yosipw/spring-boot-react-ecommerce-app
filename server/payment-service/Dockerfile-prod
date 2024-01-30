@@ -3,7 +3,7 @@
 # 1. Building the App with Maven
 FROM maven:3-jdk-11
 
-ADD . /payment_service_staging
+ADD ./server/payment-service /payment_service_staging
 
 WORKDIR /payment_service_staging
 

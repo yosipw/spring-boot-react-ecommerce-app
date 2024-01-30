@@ -28,26 +28,6 @@ const Home = props => {
     useEffect(() => {
         log.info("[Home]: component did mount.")
 
-        ///////////////////////////////////////////////////////////
-        // Below requests are made just to wake up all services on
-        // Heroku so that it serves the requests quickly.
-        // This should be removed when the app is deployed on actual server.
-        props.setDefaultSearchSuggestions()
-        authServiceAPI.post('/authenticate').catch(err => {
-        })
-        if (process.env.REACT_APP_PAYMENT_SERVICE_URL) {
-            axios({
-                method: 'post',
-                url: `${process.env.REACT_APP_PAYMENT_SERVICE_URL}/payment`,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                data: "xyz"
-            }).catch(err => {
-            })
-        }
-        ///////////////////////////////////////////////////////////
-
 
         if (!homeAPIData.hasOwnProperty("data")) {
             props.getDataViaAPI(LOAD_HOME_PAGE, HOME_PAGE_DATA_API, null, false);

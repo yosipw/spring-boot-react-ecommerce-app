@@ -2,11 +2,11 @@ AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
   DesiredCapacity:
     Type: Number
-    Default: '3'
+    Default: '2'
     Description: Number of instances to launch in your ECS cluster.
   MaxSize:
     Type: Number
-    Default: '6'
+    Default: '2'
     Description: Maximum number of instances that can be launched in your ECS cluster.
   InstanceType:
     Description: EC2 instance type
@@ -27,16 +27,8 @@ Mappings:
       CIDR: '10.0.0.0/16'
     PublicOne:
       CIDR: '10.0.0.0/24'
-    # PublicTwo:
-    #   CIDR: '10.0.1.0/24'
-    # PublicThree:
-    #   CIDR: '10.0.2.0/24'
-    # PublicFour:
-    #   CIDR: '10.0.3.0/24'
-    # PublicFive:
-    #   CIDR: '10.0.4.0/24'
-    # PublicSix:
-    #   CIDR: '10.0.5.0/24'
+    PublicTwo:
+      CIDR: '10.0.1.0/24'
 Resources:
   # VPC into which stack instances will be placed
   VPC:
@@ -55,56 +47,16 @@ Resources:
       VpcId: !Ref 'VPC'
       CidrBlock: !FindInMap ['SubnetConfig', 'PublicOne', 'CIDR']
       MapPublicIpOnLaunch: true
-  # PublicSubnetTwo:
-  #   Type: AWS::EC2::Subnet
-  #   Properties:
-  #     AvailabilityZone:
-  #        Fn::Select:
-  #        - 0
-  #        - Fn::GetAZs: {Ref: 'AWS::Region'}
-  #     VpcId: !Ref 'VPC'
-  #     CidrBlock: !FindInMap ['SubnetConfig', 'PublicTwo', 'CIDR']
-  #     MapPublicIpOnLaunch: true
-  # PublicSubnetThree:
-  #   Type: AWS::EC2::Subnet
-  #   Properties:
-  #     AvailabilityZone:
-  #        Fn::Select:
-  #        - 0
-  #        - Fn::GetAZs: {Ref: 'AWS::Region'}
-  #     VpcId: !Ref 'VPC'
-  #     CidrBlock: !FindInMap ['SubnetConfig', 'PublicThree', 'CIDR']
-  #     MapPublicIpOnLaunch: true
-  # PublicSubnetFour:
-  #   Type: AWS::EC2::Subnet
-  #   Properties:
-  #     AvailabilityZone:
-  #        Fn::Select:
-  #        - 0
-  #        - Fn::GetAZs: {Ref: 'AWS::Region'}
-  #     VpcId: !Ref 'VPC'
-  #     CidrBlock: !FindInMap ['SubnetConfig', 'PublicFour', 'CIDR']
-  #     MapPublicIpOnLaunch: true
-  # PublicSubnetFive:
-  #   Type: AWS::EC2::Subnet
-  #   Properties:
-  #     AvailabilityZone:
-  #        Fn::Select:
-  #        - 0
-  #        - Fn::GetAZs: {Ref: 'AWS::Region'}
-  #     VpcId: !Ref 'VPC'
-  #     CidrBlock: !FindInMap ['SubnetConfig', 'PublicFive', 'CIDR']
-  #     MapPublicIpOnLaunch: true
-  # PublicSubnetSix:
-  #   Type: AWS::EC2::Subnet
-  #   Properties:
-  #     AvailabilityZone:
-  #        Fn::Select:
-  #        - 0
-  #        - Fn::GetAZs: {Ref: 'AWS::Region'}
-  #     VpcId: !Ref 'VPC'
-  #     CidrBlock: !FindInMap ['SubnetConfig', 'PublicSix', 'CIDR']
-  #     MapPublicIpOnLaunch: true
+  PublicSubnetTwo:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+         Fn::Select:
+         - 1
+         - Fn::GetAZs: {Ref: 'AWS::Region'}
+      VpcId: !Ref 'VPC'
+      CidrBlock: !FindInMap ['SubnetConfig', 'PublicTwo', 'CIDR']
+      MapPublicIpOnLaunch: true
   InternetGateway:
     Type: AWS::EC2::InternetGateway
   GatewayAttachement:
@@ -128,31 +80,11 @@ Resources:
     Properties:
       SubnetId: !Ref PublicSubnetOne
       RouteTableId: !Ref PublicRouteTable
-  # PublicSubnetTwoRouteTableAssociation:
-  #   Type: AWS::EC2::SubnetRouteTableAssociation
-  #   Properties:
-  #     SubnetId: !Ref PublicSubnetTwo
-  #     RouteTableId: !Ref PublicRouteTable
-  # PublicSubnetThreeRouteTableAssociation:
-  #   Type: AWS::EC2::SubnetRouteTableAssociation
-  #   Properties:
-  #     SubnetId: !Ref PublicSubnetThree
-  #     RouteTableId: !Ref PublicRouteTable
-  # PublicSubnetFourRouteTableAssociation:
-  #   Type: AWS::EC2::SubnetRouteTableAssociation
-  #   Properties:
-  #     SubnetId: !Ref PublicSubnetFour
-  #     RouteTableId: !Ref PublicRouteTable
-  # PublicSubnetFiveRouteTableAssociation:
-  #   Type: AWS::EC2::SubnetRouteTableAssociation
-  #   Properties:
-  #     SubnetId: !Ref PublicSubnetFive
-  #     RouteTableId: !Ref PublicRouteTable
-  # PublicSubnetSixRouteTableAssociation:
-  #   Type: AWS::EC2::SubnetRouteTableAssociation
-  #   Properties:
-  #     SubnetId: !Ref PublicSubnetSix
-  #     RouteTableId: !Ref PublicRouteTable
+  PublicSubnetTwoRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetTwo
+      RouteTableId: !Ref PublicRouteTable
 
   # ECS Resources
   ECSCluster:
@@ -200,22 +132,14 @@ Resources:
         Value: '30'
       Subnets:
         - !Ref PublicSubnetOne
-        # - !Ref PublicSubnetTwo
-        # - !Ref PublicSubnetThree
-        # - !Ref PublicSubnetFour
-        # - !Ref PublicSubnetFive
-        # - !Ref PublicSubnetSix
+        - !Ref PublicSubnetTwo
       SecurityGroups: [!Ref 'EcsSecurityGroup']
   ECSAutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
       VPCZoneIdentifier:
         - !Ref PublicSubnetOne
-        # - !Ref PublicSubnetTwo
-        # - !Ref PublicSubnetThree
-        # - !Ref PublicSubnetFour
-        # - !Ref PublicSubnetFive
-        # - !Ref PublicSubnetSix
+        - !Ref PublicSubnetTwo
       LaunchConfigurationName: !Ref 'ContainerInstances'
       MinSize: '1'
       MaxSize: !Ref 'MaxSize'

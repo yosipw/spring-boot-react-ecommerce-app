@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS Fargate cluster that can span public and private subnets. Supports
+             public facing load balancers, private internal load balancers, and
+             both internal and external service discovery namespaces.
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: production
+    Description: "A friendly environment name that will be used for namespacing all cluster resources. Example: staging, qa, or production"
+Resources:
+  privateVPCEndpoint3:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.s3
+      RouteTableIds:
+        - Fn::ImportValue: !Sub ${EnvironmentName}:PrivateRouteTableOne
+      VpcEndpointType: Gateway
+      VpcId: 
+        Fn::ImportValue: !Sub ${EnvironmentName}:VpcId
+  privateVPCEndpoint4:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.logs
+      PrivateDnsEnabled: True
+      SecurityGroupIds:
+        - Fn::ImportValue: !Sub ${EnvironmentName}:EC2VpcEndpointSG
+      SubnetIds:
+            - Fn::ImportValue: !Sub ${EnvironmentName}:PrivateSubnetOne
+            - Fn::ImportValue: !Sub ${EnvironmentName}:PrivateSubnetTwo
+      VpcEndpointType: Interface
+      VpcId: 
+        Fn::ImportValue: !Sub ${EnvironmentName}:VpcId
