@@ -1,0 +1,12 @@
+node("jenkins_agent_2") {
+	stage('Do job stage') {
+		withAWS(credentials: 'AWS_CREDENTIAL_YOSSI', region:'us-east-1') {
+		   def outputs = cfnDescribe(stack:'init-01')
+
+            for(output in outputs) {
+                println output
+            }
+		   
+		}
+	}
+}
