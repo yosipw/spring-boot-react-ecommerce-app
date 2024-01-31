@@ -30,19 +30,27 @@ pipeline {
 
     stages {
         stage('Build & Test') {
-			echo("Build & Test")
+            steps {
+                echo 'Build & Test'
+            }
 		}
 
         stage('Build Docker Image') {
-			echo("Build Docker Image")
+            steps {
+                echo 'Build Docker Image'
+            }
 		}
 
         stage('Push Image to ECR') {
-			echo("Push Image to ECR")
+            steps {
+                echo 'Push Image to ECR'
+            }
 		}
 
         stage('Deploy in ECS') {
-			echo("Deploy in ECS")
+            steps {
+                echo 'Deploy in ECS'
+            }
 		}
     }
 
