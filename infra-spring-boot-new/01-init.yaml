@@ -5,7 +5,7 @@ Description: AWS Fargate cluster that can span public and private subnets. Suppo
 Parameters:
   EnvironmentName:
     Type: String
-    Default: production
+    Default: yossi-ecs
     Description: "A friendly environment name that will be used for namespacing all cluster resources. Example: staging, qa, or production"
 Mappings:
   # Hard values for the subnet masks. These masks define
@@ -73,7 +73,6 @@ Resources:
   PublicSubnetOne:
     Type: AWS::EC2::Subnet
     Properties:
-      #MapPublicIpOnLaunch: true
       AvailabilityZone: !Select
         - 0
         - Fn::GetAZs: !Ref 'AWS::Region'
@@ -82,7 +81,6 @@ Resources:
   PublicSubnetTwo:
     Type: AWS::EC2::Subnet
     Properties:
-      #MapPublicIpOnLaunch: true
       AvailabilityZone: !Select
         - 1
         - Fn::GetAZs: !Ref 'AWS::Region'
@@ -113,6 +111,35 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref IGW
 
+  # Security group for ALB to be able to receive request from internet
+      
+  ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${EnvironmentName}-ALBSecurityGroup
+      GroupDescription: Allow HTTP Only.
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+
+  # Passing request from ALBSecurityGroup to service
+
+  ServiceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${EnvironmentName}-ServiceSecurityGroup
+      GroupDescription: Allow HTTP from ALBSecurityGroup.
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !Ref ALBSecurityGroup
+
   # ECS Resources
   ECSCluster:
     Type: AWS::ECS::Cluster
@@ -125,6 +152,17 @@ Resources:
     Properties:
       GroupDescription: Access to the Fargate containers
       VpcId: !Ref 'VPC'
+
+  # Rule which allows the containers to talk to other containers in the same group.
+  # This is what allows a container to use service discovery to get the IP and talk
+  # to another container in the same group.
+  EcsSecurityGroupIngressFromSelf:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Ingress from other containers in the cluster
+      GroupId: !Ref ContainerSecurityGroup
+      IpProtocol: -1
+      SourceSecurityGroupId: !Ref ContainerSecurityGroup
 
   # A role used to allow AWS Autoscaling to inspect stats and adjust scaleable targets
   # on your AWS account
@@ -222,6 +260,16 @@ Resources:
 # about changing any of them, because of them are exported with specific
 # names so that the other task related CF templates can use them.
 Outputs:
+  ALBSecurityGroup:
+    Description: A security group used to allow Fargate containers to receive traffic
+    Value: !Ref 'ALBSecurityGroup'
+    Export:
+      Name: !Sub ${EnvironmentName}:ALBSecurityGroup
+  ServiceSecurityGroup:
+    Description: A security group used to allow Fargate containers to receive traffic
+    Value: !Ref 'ServiceSecurityGroup'
+    Export:
+      Name: !Sub ${EnvironmentName}:ServiceSecurityGroup
   ContainerSecurityGroup:
     Description: A security group used to allow Fargate containers to receive traffic
     Value: !Ref 'ContainerSecurityGroup'

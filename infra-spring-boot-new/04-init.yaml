@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: yossi-ecs
+    Description: The name of the environment to add this service to
+
+
+Resources:
+  ALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub ${EnvironmentName}-ALB
+      Scheme: internet-facing
+      SecurityGroups:
+        - Fn::ImportValue: !Sub ${EnvironmentName}:ALBSecurityGroup
+      Subnets:
+        - Fn::ImportValue: !Sub ${EnvironmentName}:PublicSubnetOne
+        - Fn::ImportValue: !Sub ${EnvironmentName}:PublicSubnetTwo
+      Type: application
+
+  ALBTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId:
+        Fn::ImportValue: !Sub ${EnvironmentName}:VpcId
+      Name: !Sub ${EnvironmentName}-ALBTargetGroup
+      Protocol: HTTP
+      Port: 80
+      HealthCheckProtocol: HTTP
+      HealthCheckPath: /
+      TargetType: ip
+        
+  ALBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties: 
+      DefaultActions: 
+        - TargetGroupArn: !Ref ALBTargetGroup
+          Type: forward
+      LoadBalancerArn: !Ref ALB
+      Port: 80
+      Protocol: HTTP
+
+
+Outputs:
+  ALBTargetGroup:
+    Description: ALBTargetGroup
+    Value: !Ref 'ALBTargetGroup'
+    Export:
+      Name: !Sub ${EnvironmentName}:ALBTargetGroup
+  ALB:
+    Description: ALB
+    Value: !Ref 'ALB'
+    Export:
+      Name: !Sub ${EnvironmentName}:ALB
+  LoadBalancerUrl:
+    Description: The URL of the ALB
+    Value: !GetAtt ALB.DNSName

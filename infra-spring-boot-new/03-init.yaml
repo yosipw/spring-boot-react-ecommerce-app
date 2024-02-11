@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS Fargate cluster that can span public and private subnets. Supports
+             public facing load balancers, private internal load balancers, and
+             both internal and external service discovery namespaces.
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: yossi-ecs
+    Description: "A friendly environment name that will be used for namespacing all cluster resources. Example: staging, qa, or production"
+Resources:
+  EC2VpcEndpointSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub vpc-endpoint-ec2-${EnvironmentName}-sg-cfn
+      GroupDescription: Allow EC2 VPC Endpoint outbound traffic
+      VpcId: 
+        Fn::ImportValue: !Sub ${EnvironmentName}:VpcId
+      SecurityGroupIngress:
+        - SourceSecurityGroupId:
+            Fn::ImportValue: !Sub ${EnvironmentName}:ContainerSecurityGroup
+          FromPort: 443
+          IpProtocol: tcp
+          ToPort: 443
+          Description: Allow traffic from within the VPC to the EC2 Endpoint
+  privateVPCEndpoint1:
+      Type: AWS::EC2::VPCEndpoint
+      Properties:
+        ServiceName: !Sub com.amazonaws.${AWS::Region}.ecr.dkr
+        PrivateDnsEnabled: True
+        SecurityGroupIds:
+          - !Ref EC2VpcEndpointSG
+        SubnetIds:
+            - Fn::ImportValue: !Sub ${EnvironmentName}:PrivateSubnetOne
+            - Fn::ImportValue: !Sub ${EnvironmentName}:PrivateSubnetTwo
+        VpcEndpointType: Interface
+        VpcId: 
+          Fn::ImportValue: !Sub ${EnvironmentName}:VpcId
+  privateVPCEndpoint2:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ecr.api
+      PrivateDnsEnabled: True
+      SecurityGroupIds:
+        - !Ref EC2VpcEndpointSG
+      SubnetIds:
+            - Fn::ImportValue: !Sub ${EnvironmentName}:PrivateSubnetOne
+            - Fn::ImportValue: !Sub ${EnvironmentName}:PrivateSubnetTwo
+      VpcEndpointType: Interface
+      VpcId: 
+        Fn::ImportValue: !Sub ${EnvironmentName}:VpcId
+  privateVPCEndpoint3:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.s3
+      RouteTableIds:
+        - Fn::ImportValue: !Sub ${EnvironmentName}:PrivateRouteTableOne
+      VpcEndpointType: Gateway
+      VpcId: 
+        Fn::ImportValue: !Sub ${EnvironmentName}:VpcId
+  privateVPCEndpoint4:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.logs
+      PrivateDnsEnabled: True
+      SecurityGroupIds:
+        - !Ref EC2VpcEndpointSG
+      SubnetIds:
+            - Fn::ImportValue: !Sub ${EnvironmentName}:PrivateSubnetOne
+            - Fn::ImportValue: !Sub ${EnvironmentName}:PrivateSubnetTwo
+      VpcEndpointType: Interface
+      VpcId: 
+        Fn::ImportValue: !Sub ${EnvironmentName}:VpcId
+Outputs:
+  EC2VpcEndpointSG:
+    Description: The name of the ECS SecurityGroup
+    Value: !Ref 'EC2VpcEndpointSG'
+    Export:
+      Name: !Sub ${EnvironmentName}:EC2VpcEndpointSG

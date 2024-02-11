@@ -1,8 +1,6 @@
 # Base Package
 FROM node:14
 
-MAINTAINER Ujjaval Desai
-
 # Create app directory
 WORKDIR /usr/src/app
 
